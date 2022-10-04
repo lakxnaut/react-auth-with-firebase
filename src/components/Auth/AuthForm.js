@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react';
+import { json } from 'react-router-dom';
 
 import classes from './AuthForm.module.css';
 
@@ -11,44 +12,59 @@ const AuthForm = () => {
     setIsLogin((prevState) => !prevState);
   };
 
+  async function saveToken(data) {
+    const resp = await data.json();
+    const token = resp.idToken;
+
+
+    localStorage.setItem('token', token)
+
+  }
+
   async function submitHandler(e) {
     e.preventDefault();
 
     const email = emailRef.current.value
     const password = passwordRef.current.value
+    let url;
 
 
     if (isLogin) {
+      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBVAE7aUSl9yyrZqGn-MO-JWRkJvemcR3g'
 
     }
     else {
-      const resp = await fetch('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBVAE7aUSl9yyrZqGn-MO-JWRkJvemcR3g', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
+
+      url = 'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBVAE7aUSl9yyrZqGn-MO-JWRkJvemcR3g'
 
 
-        },
-        body: JSON.stringify(
-          {
-            email: emailRef.current.value,
-            password: passwordRef.current.value,
-            returnSecureToken: true
-          }
-        )
-
-      })
-
-      if (resp.ok) {
-        console.log('done bro');
-      }
-      else {
-        const data = await resp.json()
-        alert(data.error.message);
-
-      }
+    }
 
 
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+
+
+      },
+      body: JSON.stringify(
+        {
+          email: email,
+          password: password,
+          returnSecureToken: true
+        }
+      )
+
+    })
+
+    if (resp.ok) {
+      console.log(resp);
+      isLogin && saveToken(resp)
+    }
+    else {
+      const data = await resp.json()
+      alert(data.error.message);
 
     }
 
