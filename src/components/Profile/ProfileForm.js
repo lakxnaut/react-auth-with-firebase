@@ -1,11 +1,13 @@
 import classes from './ProfileForm.module.css';
 import { useContext, useRef } from 'react';
 import { AuthContext } from '../store/auth-context';
+import { useNavigate } from 'react-router-dom';
 
 
 const ProfileForm = () => {
   const authCtx = useContext(AuthContext);
   const emailRef = useRef();
+  const navigate = useNavigate();
 
 
   async function onSubmitHandler(e) {
@@ -23,6 +25,7 @@ const ProfileForm = () => {
       })
     })
     console.log(resp);
+    navigate('/')
 
   }
 
