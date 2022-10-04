@@ -20,6 +20,8 @@ const AuthForm = () => {
 
     authCtx.login(token)
 
+    console.log(authCtx.token);
+
   }
 
   async function submitHandler(e) {
@@ -60,8 +62,9 @@ const AuthForm = () => {
     })
 
     if (resp.ok) {
-      console.log(resp);
-      isLogin && saveToken(resp)
+
+      saveToken(resp)
+
     }
     else {
       const data = await resp.json()
